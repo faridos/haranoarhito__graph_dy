@@ -1,0 +1,240 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="bower_components/select2/dist/css/select2.min.css"/>
+    <!--<link rel="stylesheet" type="text/css" href="bower_components/rateit/src/rateit.less"/>-->
+    <script type="text/javascript"  src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript"  src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript"  src="bower_components/select2/dist/js/select2.min.js"></script>
+    <script type="text/javascript"  src="bower_components/jRate/dist/jRate.min.js"></script>
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js"></script>-->
+    <script type="text/javascript"  src="dygraph-dev.js"></script>
+</head>
+<body>
+
+<div class="row">
+<div class="col-lg-3">
+</div>
+<div class="col-lg-6">
+    <div id="checks">
+        <p><b>Display: </b>
+            <input type="checkbox" id="0" onclick="stockchange(this)" checked="">
+            <label for="0"> Nominal</label>
+            <input type="checkbox" id="1" onclick="stockchange(this)" checked="">
+            <label for="1"> Real</label>
+            <!--<input type="checkbox" id="ann" onclick="annotationschange(this)" checked="">-->
+            <!--<label for="ann"> Annotations</label></p>-->
+    </div>
+    <div id="graphdiv">
+
+    </div>
+    </br>
+    <div class="row">
+
+        <div class="col-lg-10" style="    margin-left: 25px;">
+            <select id='select_snap' class="js-example-placeholder-single select2 pull-left col-lg-9 " >
+                <option value="Snap week 1">Snap week 1</option>
+                <option value="Snap week 2">Snap week 2</option>
+                <option value="Snap week 3">Snap week 3</option>
+                <option value="Snap week 4">Snap week 4</option>
+
+            </select>
+            <a class="btn btn-sm btn-warning pull-right" style=" margin-right: 70px;" href="#"
+               data-href="#"
+               data-toggle="modal" data-target="#myModalHorizontal">Snap</a>
+        </div>
+    </div>
+</div>
+<div class="col-lg-3">
+</div>
+
+
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="myModalHorizontal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close"
+                        data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                   Create SnapShoot
+                </h4>
+            </div>
+            <form class="form-horizontal" role="form">
+            <!-- Modal Body -->
+            <div class="modal-body">
+
+                    <div class="form-group">
+                        <label  class="col-sm-2 control-label"
+                                for="title">Title</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control"
+                                   id="title" placeholder="The snap title"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"
+                               for="description" >Description</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control"
+                                   id="description" placeholder="The snap description"/>
+                        </div>
+                    </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label"
+                           for="description" >                 </label>
+                    <div class="jRate" data-rateit-mode="font" data-rateit-icon="" style="font-family:fontawesome">
+                    </div>
+                </div>
+
+
+            </div>
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default"
+                        data-dismiss="modal">
+                    Close
+                </button>
+                <button type="button"  id="submit_snap" class="btn btn-primary">
+                    Snap it!
+                </button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var stock_annotations = [
+        {
+            series: "Real",
+            x: "1929-08-15",
+            shortText: "A",
+            text: "1929 Stock Market Peak",
+            cssClass: 'annotation'
+        },
+        {
+            series: "Nominal",
+            x: "1987-08-15",
+            shortText: "B",
+            text: "1987 Crash",
+            cssClass: 'annotation'
+        },
+        {
+            series: "Nominal",
+            x: "1999-12-15",
+            shortText: "C",
+            text: "1999 (.com) Peak",
+            cssClass: 'annotation'
+        },
+        {
+            series: "Nominal",
+            x: "2007-10-15",
+            shortText: "D",
+            text: "All-Time Market Peak",
+            cssClass: 'annotation'
+        }
+    ];
+
+    // From http://www.econstats.com/eqty/eq_d_mi_3.csv
+    stockchart = new Dygraph(
+            document.getElementById('graphdiv'),
+            "dow.txt",
+            {
+                showRoller: true,
+                customBars: true,
+                labelsKMB: false,
+                drawCallback: function(g, is_initial) {
+                    if (!is_initial) return;
+                    g.setAnnotations( stock_annotations );
+                },
+               showRangeSelector:true,
+               rangeSelectorHeight:30,
+            }
+    );
+
+    function stockchange(el) {
+        stockchart.setVisibility(el.id, el.checked);
+    }
+
+    function annotationschange(el) {
+        if (el.checked) {
+            stockchart.setAnnotations(stock_annotations);
+        } else {
+            stockchart.setAnnotations([]);
+        }
+    }
+</script>
+<script type="text/javascript">
+    $(document).ready(function(){
+
+        $(".js-example-placeholder-single").select2({
+            placeholder: "Select a snapshoot",
+            allowClear: true
+        });
+
+        var items=  listAllItems();
+        console.log('------------------');
+        console.log(items);
+        function listAllItems(){
+            items={};
+            for (i=0; i<=sessionStorage.length-1; i++)
+            {
+
+                key = sessionStorage.key(i);
+                console.log('key==>'+key);
+                val = sessionStorage.getItem(key);
+                console.log('val==>'+val);
+                console.log('~~~~~~~~~~~~~~~~~~~~~~~');
+
+                items[key]=val;
+            }
+            return items;
+        }
+
+
+        $.each(items, function (i, item) {
+            $('#select_snap').append($('<option>', {
+                value: item,
+                text : i
+            }));
+        });
+
+        $('#select_snap').change(function(){
+            var title = $(this).val();
+            $(".modal-body #title").val( title );
+//            alert(sessionStorage.getItem(title));
+            $(".modal-body #description").val( sessionStorage.getItem(title) );
+            $("#myModalHorizontal").modal('show');
+        });
+
+    });
+    $("#submit_snap").click(function(){
+        var title = $('#title').val();
+        var description = $('#description').val();
+        sessionStorage.setItem(title,description);
+        $('#select_snap').append($('<option>', {
+            value: title,
+            text: title
+        }));
+        $("#myModalHorizontal").modal('hide');
+    });
+
+</script>
+<script type="text/javascript">
+    $(".jRate").jRate();
+</script>
+
+</body>
+</html>
+
+
+
